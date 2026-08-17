@@ -1,0 +1,27 @@
+# Environment & Secrets
+.env
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+
+# Deep research scratch folder
+deep-research/
+
+# System & IDE
+.DS_Store
+.vscode/
+.idea/
+tmp/
+temp/

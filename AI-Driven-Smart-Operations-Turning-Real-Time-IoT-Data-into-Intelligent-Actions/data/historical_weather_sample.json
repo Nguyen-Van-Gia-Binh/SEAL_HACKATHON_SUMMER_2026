@@ -1,0 +1,54 @@
+{
+  "dataset_info": {
+    "title": "Multi-Region IoT Weather & Anomaly Scenarios Dataset",
+    "description": "Realistic high-frequency sensor readings capturing ambient conditions and weather transition events.",
+    "sample_rate_hz": 1,
+    "scenarios": ["normal_summer", "tropical_typhoon_approach", "extreme_heatwave", "mountain_cold_front"]
+  },
+  "scenarios": {
+    "normal_summer": {
+      "station_id": "STN_HCM_02",
+      "base_temp": 31.5,
+      "base_humidity": 72.0,
+      "base_pressure": 1010.5,
+      "base_wind_speed": 3.2,
+      "base_rainfall": 0.0,
+      "base_uv_index": 8.5,
+      "pm25": 35.0,
+      "behavior": "Mild diurnal variation with light breeze."
+    },
+    "tropical_typhoon_approach": {
+      "station_id": "STN_DN_03",
+      "base_temp": 27.0,
+      "base_humidity": 94.0,
+      "base_pressure": 988.0,
+      "base_wind_speed": 18.5,
+      "base_rainfall": 45.0,
+      "base_uv_index": 1.2,
+      "pm25": 12.0,
+      "behavior": "Sharp barometric pressure drop (-4.5 hPa/hr), heavy downpour, high wind gusts up to 28 m/s."
+    },
+    "extreme_heatwave": {
+      "station_id": "STN_HN_01",
+      "base_temp": 39.8,
+      "base_humidity": 55.0,
+      "base_pressure": 1004.2,
+      "base_wind_speed": 1.5,
+      "base_rainfall": 0.0,
+      "base_uv_index": 11.5,
+      "pm25": 110.0,
+      "behavior": "Extreme Heat Index exceeding 46°C, hazardous UV radiation, severe urban heat island trap."
+    },
+    "mountain_cold_front": {
+      "station_id": "STN_SP_04",
+      "base_temp": 6.5,
+      "base_humidity": 98.0,
+      "base_pressure": 850.0,
+      "base_wind_speed": 7.0,
+      "base_rainfall": 4.5,
+      "base_uv_index": 0.5,
+      "pm25": 8.0,
+      "behavior": "Dense fog, near-freezing mountain frost risk, high wind chill factor."
+    }
+  }
+}

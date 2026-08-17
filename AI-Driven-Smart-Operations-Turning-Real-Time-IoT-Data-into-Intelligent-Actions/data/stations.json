@@ -1,0 +1,68 @@
+[
+  {
+    "station_id": "STN_HN_01",
+    "station_name": "Hanoi Ba Dinh Weather Station",
+    "region": "Northern Vietnam",
+    "climate_zone": "Humid Subtropical",
+    "lat": 21.0338,
+    "lon": 105.8286,
+    "elevation_m": 12,
+    "ingestion_protocol": "MQTT",
+    "sensors": ["temp", "humidity", "pressure", "wind_speed", "wind_direction", "rainfall", "pm25"]
+  },
+  {
+    "station_id": "STN_HCM_02",
+    "station_name": "HCMC District 1 Weather Station",
+    "region": "Southern Vietnam",
+    "climate_zone": "Tropical Wet and Dry",
+    "lat": 10.7769,
+    "lon": 106.7009,
+    "elevation_m": 5,
+    "ingestion_protocol": "MQTT",
+    "sensors": ["temp", "humidity", "pressure", "wind_speed", "wind_direction", "rainfall", "uv_index"]
+  },
+  {
+    "station_id": "STN_DN_03",
+    "station_name": "Da Nang Coastal Coastal Radar Station",
+    "region": "Central Vietnam",
+    "climate_zone": "Tropical Monsoon Coastal",
+    "lat": 16.0544,
+    "lon": 108.2022,
+    "elevation_m": 8,
+    "ingestion_protocol": "CoAP",
+    "sensors": ["temp", "humidity", "pressure", "wind_speed", "wind_direction", "rainfall", "solar_radiation"]
+  },
+  {
+    "station_id": "STN_SP_04",
+    "station_name": "Sa Pa High Mountain Meteorological Station",
+    "region": "Northwest Mountain",
+    "climate_zone": "Subtropical Highland",
+    "lat": 22.3364,
+    "lon": 103.8438,
+    "elevation_m": 1500,
+    "ingestion_protocol": "CoAP",
+    "sensors": ["temp", "humidity", "pressure", "wind_speed", "fog_density", "uv_index"]
+  },
+  {
+    "station_id": "STN_SG_05",
+    "station_name": "Singapore Changi Smart Terminal",
+    "region": "Southeast Asia",
+    "climate_zone": "Tropical Rainforest",
+    "lat": 1.3521,
+    "lon": 103.8198,
+    "elevation_m": 15,
+    "ingestion_protocol": "MQTT",
+    "sensors": ["temp", "humidity", "pressure", "wind_speed", "wind_direction", "rainfall", "pm25", "uv_index"]
+  },
+  {
+    "station_id": "STN_TK_06",
+    "station_name": "Tokyo Shinjuku Meteorological Tower",
+    "region": "East Asia",
+    "climate_zone": "Humid Subtropical",
+    "lat": 35.6895,
+    "lon": 139.6917,
+    "elevation_m": 40,
+    "ingestion_protocol": "MQTT",
+    "sensors": ["temp", "humidity", "pressure", "wind_speed", "pm25", "uv_index"]
+  }
+]

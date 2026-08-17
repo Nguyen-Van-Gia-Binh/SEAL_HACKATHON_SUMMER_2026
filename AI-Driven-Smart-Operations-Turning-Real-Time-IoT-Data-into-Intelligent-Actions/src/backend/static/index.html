@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cổng Giám Sát Khí Tượng IoT & Điều Hành Nông Nghiệp Thông Minh • Bộ Nông Nghiệp & PTNT</title>
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- MARD Concept White Style -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <!-- TOP NAVIGATION & HEADER -->
+    <header class="navbar glass-card">
+      <div class="navbar-top">
+        <div class="brand-group">
+          <div class="logo-icon">
+            <i class="fa-solid fa-wheat-awn pulse-icon"></i>
+          </div>
+          <div>
+            <h1 class="brand-title">HỆ THỐNG GIÁM SÁT THỜI TIẾT IOT & ĐIỀU HÀNH NÔNG NGHIỆP</h1>
+            <p class="brand-subtitle">Cổng Thông Tin Quan Trắc Khí Tượng Thủy Văn • Bộ Nông Nghiệp & Phát Triển Nông Thôn</p>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="scenario-picker">
+            <label for="scenarioSelect"><i class="fa-solid fa-cloud-sun-rain"></i> Kịch bản khí tượng:</label>
+            <select id="scenarioSelect" onchange="changeScenario(this.value)">
+              <option value="normal">☀️ Thời tiết bình thường (Normal Summer)</option>
+              <option value="typhoon">🌀 Bão nhiệt đới / Áp thấp mạnh (Typhoon Surge)</option>
+              <option value="heatwave">🔥 Nắng nóng / Khô hạn (Heatwave Alert)</option>
+              <option value="flood">🌧️ Mưa lớn / Nguy cơ ngập lụt (Flash Flood)</option>
+              <option value="cold_front">❄️ Không khí lạnh / Sương muối (Cold Front)</option>
+            </select>
+          </div>
+          <div class="connection-status">
+            <span id="wsStatusDot" class="status-dot online"></span>
+            <span id="wsStatusText">TRỰC TUYẾN</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="navbar-bottom">
+        <div class="protocol-badges">
+          <span class="badge badge-mqtt"><i class="fa-solid fa-tower-broadcast"></i> MQTT :1883</span>
+          <span class="badge badge-coap"><i class="fa-solid fa-microchip"></i> CoAP :5683 UDP</span>
+          <span class="badge badge-kafka"><i class="fa-solid fa-network-wired"></i> Kafka / Redpanda :9092</span>
+          <span class="badge badge-stream"><i class="fa-solid fa-water"></i> Watermarking Engine</span>
+        </div>
+        <div class="badge badge-ai">
+          <i class="fa-solid fa-seedling"></i> Trợ Lý AI Khí Tượng Nông Nghiệp
+        </div>
+      </div>
+    </header>
+
+    <!-- METRICS OVERVIEW CARDS -->
+    <div class="kpi-grid">
+      <div class="kpi-card glass-card">
+        <div class="kpi-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+        <div class="kpi-content">
+          <span class="kpi-label">Trạm Quan Trắc IoT</span>
+          <h3 class="kpi-value" id="kpiStationCount">6 Trạm</h3>
+          <span class="kpi-sub">Hà Nội, TP.HCM, Đà Nẵng, Sa Pa...</span>
+        </div>
+      </div>
+
+      <div class="kpi-card glass-card">
+        <div class="kpi-icon icon-cyan"><i class="fa-solid fa-bolt"></i></div>
+        <div class="kpi-content">
+          <span class="kpi-label">Giao Thức Thu Thập</span>
+          <h3 class="kpi-value">MQTT & CoAP</h3>
+          <span class="kpi-sub">Độ trễ: &lt; 15ms qua Kafka</span>
+        </div>
+      </div>
+
+      <div class="kpi-card glass-card">
+        <div class="kpi-icon icon-purple"><i class="fa-solid fa-sliders"></i></div>
+        <div class="kpi-content">
+          <span class="kpi-label">Xử Lý Dòng Dữ Liệu</span>
+          <h3 class="kpi-value">Tumbling 1m / Sliding 5m</h3>
+          <span class="kpi-sub" id="kpiWatermark">Watermark: In-Sync</span>
+        </div>
+      </div>
+
+      <div class="kpi-card glass-card">
+        <div class="kpi-icon icon-red"><i class="fa-solid fa-seedling"></i></div>
+        <div class="kpi-content">
+          <span class="kpi-label">Chỉ Số Rủi Ro Nông Nghiệp</span>
+          <h3 class="kpi-value" id="kpiRiskScore">-- / 100</h3>
+          <span class="kpi-sub" id="kpiRiskLevel">Sẵn sàng phân tích</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <main class="dashboard-grid">
+      <!-- LEFT COLUMN: MAP & STATION SELECTOR -->
+      <section class="panel glass-card panel-left">
+        <div class="panel-header">
+          <h2><i class="fa-solid fa-earth-asia"></i> Bản Đồ Trạm Khí Tượng & Số Liệu Quan Trắc</h2>
+          <span class="live-pill"><i class="fa-solid fa-circle"></i> Trực tuyến</span>
+        </div>
+        <div id="map" class="station-map"></div>
+
+        <div class="station-selector-strip">
+          <label><i class="fa-solid fa-satellite-dish"></i> Chọn Trạm:</label>
+          <div id="stationButtons" class="station-btn-group">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <!-- ACTIVE STATION TELEMETRY CARDS -->
+        <div class="telemetry-deck">
+          <div class="station-identity-bar">
+            <div>
+              <h3 id="curStationName">Đang tải trạm...</h3>
+              <span id="curStationMeta" class="station-meta-tag">MQTT • Tọa độ</span>
+            </div>
+            <button class="btn-ai-action" onclick="triggerAiAnalyze()">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Phân tích AI ngay
+            </button>
+          </div>
+
+          <div class="sensor-gauges-grid">
+            <div class="gauge-card">
+              <span class="gauge-title"><i class="fa-solid fa-temperature-three-quarters"></i> Nhiệt độ</span>
+              <div class="gauge-val" id="gTemp">-- °C</div>
+              <div class="gauge-sub" id="gHeatIndex">Heat Index: -- °C</div>
+            </div>
+
+            <div class="gauge-card">
+              <span class="gauge-title"><i class="fa-solid fa-droplet"></i> Độ ẩm không khí</span>
+              <div class="gauge-val" id="gHumidity">-- %</div>
+              <div class="gauge-sub" id="gDewPoint">Điểm sương: -- °C</div>
+            </div>
+
+            <div class="gauge-card">
+              <span class="gauge-title"><i class="fa-solid fa-gauge-high"></i> Áp suất khí quyển</span>
+              <div class="gauge-val" id="gPressure">-- hPa</div>
+              <div class="gauge-sub" id="gPressureTrend">Biến thiên: -- hPa</div>
+            </div>
+
+            <div class="gauge-card">
+              <span class="gauge-title"><i class="fa-solid fa-wind"></i> Tốc độ gió</span>
+              <div class="gauge-val" id="gWind">-- m/s</div>
+              <div class="gauge-sub" id="gWindDir">Hướng: --</div>
+            </div>
+
+            <div class="gauge-card">
+              <span class="gauge-title"><i class="fa-solid fa-cloud-showers-heavy"></i> Lượng mưa đo được</span>
+              <div class="gauge-val" id="gRain">-- mm/h</div>
+              <div class="gauge-sub">Cường độ mưa tức thời</div>
+            </div>
+
+            <div class="gauge-card">
+              <span class="gauge-title"><i class="fa-solid fa-sun"></i> Bụi mịn PM2.5 / Bức xạ UV</span>
+              <div class="gauge-val" id="gPM25">-- µg/m³</div>
+              <div class="gauge-sub" id="gUV">UV Index: --</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN: STREAM PROCESSING & AI FORECASTING -->
+      <section class="panel glass-card panel-right">
+        <!-- STREAM PROCESSING WINDOWING VISUALIZER -->
+        <div class="sub-panel">
+          <div class="panel-header">
+            <h2><i class="fa-solid fa-chart-line"></i> Xử Lý Dòng Dữ Liệu: Tumbling & Sliding Window</h2>
+            <span class="badge badge-stream">Dữ Liệu Tổng Hợp Thực</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="streamChart"></canvas>
+          </div>
+        </div>
+
+        <!-- AI METEOROLOGICAL FORECAST & INTELLIGENCE -->
+        <div class="sub-panel">
+          <div class="panel-header">
+            <h2><i class="fa-solid fa-brain"></i> AI Dự Báo Khí Tượng & Đánh Giá Rủi Ro</h2>
+            <span id="aiProviderBadge" class="badge badge-ai"><i class="fa-solid fa-microchip"></i> Gemini / AI Engine</span>
+          </div>
+          
+          <div class="ai-forecast-card">
+            <div class="ai-condition-row">
+              <div>
+                <span class="ai-section-label">HÌNH THÁI THỜI TIẾT DỰ BÁO</span>
+                <h3 id="aiCondition" class="ai-condition-text">Đang tổng hợp dữ liệu khí tượng...</h3>
+              </div>
+              <div class="risk-pill-badge" id="aiRiskBadge">RỦI RO: ĐANG TÍNH</div>
+            </div>
+
+            <div class="synoptic-box">
+              <p id="aiSynopticText">Hệ thống đang thu thập các cửa sổ dòng dữ liệu (Stream Windows) để chạy phân tích dự báo khí tượng thủy văn...</p>
+            </div>
+
+            <div class="forecast-horizons-grid">
+              <div class="horizon-box">
+                <span class="horizon-title"><i class="fa-regular fa-clock"></i> Dự báo 6 Giờ Tới</span>
+                <p id="aiHorizon6h">Theo dõi xu hướng biến thiên áp suất và độ ẩm.</p>
+              </div>
+              <div class="horizon-box">
+                <span class="horizon-title"><i class="fa-solid fa-calendar-day"></i> Dự báo 24 Giờ Tới</span>
+                <p id="aiHorizon24h">Mô hình nhiệt động học đang cập nhật chu kỳ ngày đêm.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SMART OPERATIONS DECISION FEED -->
+        <div class="sub-panel">
+          <div class="panel-header">
+            <h2><i class="fa-solid fa-building-flag"></i> Chỉ Đạo Điều Hành & Phương Án Ứng Phó Tự Động</h2>
+            <span class="badge badge-stream">Phương Án Ứng Phó Khí Tượng</span>
+          </div>
+          <div id="decisionsList" class="decisions-feed">
+            <!-- Dynamic decision items populated via JS -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer-bar glass-card">
+      <div>Hệ Thống Quan Trắc Khí Tượng & Điều Hành Nông Nghiệp Thông Minh • Bộ Nông Nghiệp & PTNT • Ingestion: <code>MQTT 1883</code>, <code>CoAP 5683</code>, <code>Kafka 9092</code></div>
+      <div>Trạng thái: <span class="text-green"><i class="fa-solid fa-circle-check"></i> Toàn Bộ Hệ Thống Hoạt Động Bình Thường</span></div>
+    </footer>
+  </div>
+
+  <!-- Leaflet JS & Chart.js -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
